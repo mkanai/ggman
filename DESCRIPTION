@@ -1,0 +1,15 @@
+Package: ggman
+Type: Package
+Title: Manhattan Plot using ggplot2
+Version: 0.1
+Date: 2015-09-02
+Author: Masahiro Kanai
+Maintainer: Masahiro Kanai <cani.m.61st@gmail.com>
+Description: R package for plotting a manhattan plot using ggplot2.
+License: GPL (>= 2)
+LazyData: TRUE
+Imports:
+    Rcpp (>= 0.12.0),
+    ggplot2
+LinkingTo:
+    Rcpp
