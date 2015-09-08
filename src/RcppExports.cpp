@@ -19,15 +19,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // split_markername
-NumericMatrix split_markername(std::vector<std::string> markers, int n, char sep);
-RcppExport SEXP ggman_split_markername(SEXP markersSEXP, SEXP nSEXP, SEXP sepSEXP) {
+NumericMatrix split_markername(std::vector<std::string> markers, int n, char sep, bool replaceXYMT);
+RcppExport SEXP ggman_split_markername(SEXP markersSEXP, SEXP nSEXP, SEXP sepSEXP, SEXP replaceXYMTSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< std::vector<std::string> >::type markers(markersSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< char >::type sep(sepSEXP);
-    __result = Rcpp::wrap(split_markername(markers, n, sep));
+    Rcpp::traits::input_parameter< bool >::type replaceXYMT(replaceXYMTSEXP);
+    __result = Rcpp::wrap(split_markername(markers, n, sep, replaceXYMT));
     return __result;
 END_RCPP
 }

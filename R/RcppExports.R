@@ -5,7 +5,8 @@
     .Call('ggman_convert2posX', PACKAGE = 'ggman', chr, bp, posX)
 }
 
-split_markername <- function(markers, n = 2L, sep = ':') {
-    .Call('ggman_split_markername', PACKAGE = 'ggman', markers, n, sep)
+#' @export
+split_markername <- function(markers, n = 2L, sep = ':', replaceXYMT = FALSE) {
+    .Call('ggman_split_markername', PACKAGE = 'ggman', markers, n, sep, replaceXYMT)
 }
 

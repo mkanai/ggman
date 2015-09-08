@@ -2,6 +2,7 @@
 
 export(ggmanhattan)
 export(scale_colour_traditional)
+export(split_markername)
 export(theme_publication)
 import(Rcpp)
 import(ggplot2)
