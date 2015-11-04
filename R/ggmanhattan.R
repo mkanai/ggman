@@ -10,6 +10,7 @@
 #' @param scale_color
 #' @export
 ggmanhattan <- function(data, chr = "CHR", bp = "BP", P = "P",  logP = TRUE, build = 'hg19',
+                        significance = c(5.0e-8),
                         theme_base = theme_publication(),
                         scale_color = scale_color_traditional()) {
   requireNamespace('ggplot2')
@@ -34,7 +35,7 @@ ggmanhattan <- function(data, chr = "CHR", bp = "BP", P = "P",  logP = TRUE, bui
   data$y = if (logP) -log10(data[[P]]) else data[[P]]
 
   plt = ggplot(data, aes(x, y, color = color)) + geom_point() +
-          geom_hline(yintercept = -log10(5e-8)) +
+          geom_hline(yintercept = -log10(significance)) +
           scale_x_continuous(breaks = conv$breaks, labels = conv$labels) +
           theme_base + scale_color +
           theme(legend.position = "none") +
