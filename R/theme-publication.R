@@ -6,7 +6,9 @@
 #' @export
 theme_publication = function(base_size = 16, base_family = "Helvetica", ...) {
   requireNamespace('ggplot2')
-  thm = theme_classic(base_size = base_size, base_family = base_family, ...)
+  thm = theme_bw(base_size = base_size, base_family = base_family, ...)
   thm + theme(axis.line.x = element_blank(),
-              axis.ticks.x = element_blank())
+              panel.background  = element_blank(),
+              panel.grid.major  = element_blank(),
+              panel.grid.minor  = element_blank())
 }

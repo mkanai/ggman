@@ -10,6 +10,7 @@ License: GPL (>= 2)
 LazyData: TRUE
 Imports:
     Rcpp (>= 0.12.0),
-    ggplot2
-LinkingTo:
-    Rcpp
+    ggplot2,
+    grid
+LinkingTo: Rcpp
+RoxygenNote: 5.0.1
