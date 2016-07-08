@@ -10,7 +10,7 @@
 #' @param theme_base
 #' @param scale_color
 #' @export
-ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", logP = TRUE, build = 'hg19',
+ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", P_char = NULL, logP = TRUE, build = 'hg19',
                         significance = c(5.0e-8), ylim = NULL,
                         lead_snp = NULL, annotate_snp = NULL,
                         theme_base = theme_publication(),
@@ -78,10 +78,10 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", logP
         }
         scale_color_highlight = scale_color_manual(values = highlight_col)
       }
-      if (!is.character(lead_snp[[P]])) {
-        lead_snp$label = stringr::str_c(sprintf("%.3g",lead_snp[[P]]), sprintf("\u25B2"), sep = "\n")
+      if (is.null(P_char)) {
+        lead_snp$label = ifelse(logP, sprintf("\u25B2"), stringr::str_c(sprintf("%.3g",lead_snp[[P]]), sprintf("\u25B2"), sep = "\n"))
       } else {
-        lead_snp$label = stringr::str_c(lead_snp[[P]], sprintf("\u25B2"), sep = "\n")
+        lead_snp$label = stringr::str_c(lead_snp[[P_char]], sprintf("\u25B2"), sep = "\n")
       }
       plt_annot = ggplot(lead_snp) +
                     geom_text(aes(x, 0, color = color, label = label)) +
