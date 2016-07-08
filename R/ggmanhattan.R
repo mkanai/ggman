@@ -78,8 +78,13 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", logP
         }
         scale_color_highlight = scale_color_manual(values = highlight_col)
       }
+      if (!is.character(lead_snp[[P]])) {
+        lead_snp$label = stringr::str_c(sprintf("%.3g",lead_snp[[P]]), sprintf("\u25B2"), sep = "\n")
+      } else {
+        lead_snp$label = stringr::str_c(lead_snp[[P]], sprintf("\u25B2"), sep = "\n")
+      }
       plt_annot = ggplot(lead_snp) +
-                    geom_text(aes(x, 0, color = color, label = stringr::str_c(sprintf("%.3g",`P`), sprintf("\u25B2"), sep = "\n"))) +
+                    geom_text(aes(x, 0, color = color, label = label)) +
                     scale_x_continuous(limits = c(0, max(data$x)), expand = expand.x) +
                     scale_color_highlight +
                     theme_void() + theme(plot.margin = margin(6,6,-1,6))
