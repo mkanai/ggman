@@ -47,8 +47,11 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", logP
           theme(axis.text.x = element_text(size = rel(0.75)), legend.position = "none") +
           xlab(conv$xlabel) + ylab(expression(-log[10](italic(P))))
 
-  if (!is.null(annotate_snp)) {
+  if (!is.null(lead_snp)) {
     lead_snp = subset(data, `SNP` %in% lead_snp)
+  }
+
+  if (!is.null(annotate_snp)) {
     lsnp = if(!is.null(ylim)) subset(lead_snp, y < ylim[2]) else lead_snp
     plt = plt + geom_text(data = lsnp, aes(label = `SNP`), color = "black", angle = 90, hjust = -0.1)
   }
@@ -97,4 +100,3 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", logP
   }
   plt
 }
-
