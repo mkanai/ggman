@@ -73,6 +73,7 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", P_ch
         lead_snp$color[lead_snp$SNP %in% highlight[[i]]] = i
       }
     }
+    lead_snp$color = factor(lead_snp$color, levels = 1:length(highlight))
   }
 
 
@@ -80,16 +81,15 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", P_ch
     plt = plt + coord_cartesian(ylim = ylim)
     print(lead_snp)
     print(ylim)
-    print(lead_snp)
     if (!is.null(lead_snp)) {
       lead_snp = subset(lead_snp, y >= ylim[2])
       scale_color_highlight = if(!is.null(highlight)) scale_color_manual(values = highlight_col) else scale_color
       if (is.null(P_char)) {
-        lead_snp$label = if(logP) stringr::str_c(sprintf("\u25BA"), sprintf("%.1e",lead_snp$P), sep = "") else sprintf("\u25B2")
+        lead_snp$label = if(logP) stringr::str_c(sprintf("\u25BA"), sprintf("%.1e",lead_snp$P), sep = "") else sprintf("\u25BA")
       } else if (P_char != FALSE) {
         lead_snp$label = stringr::str_c(sprintf("\u25BA"), lead_snp[[P_char]], sep = "")
       } else {
-        lead_snp$label = sprintf("\u25B2")
+        lead_snp$label = sprintf("\u25BA")
       }
       plt_annot = ggplot(lead_snp) +
                     geom_text(aes(x, 0, color = color, label = label), size = 3, vjust = 0.5, angle = 90) +
