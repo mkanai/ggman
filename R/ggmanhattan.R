@@ -20,11 +20,20 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", P_ch
                         expand.x = c(0.03, 0.03), expand.y = c(0.03, 0.03)) {
   requireNamespace('ggplot2')
 
-  if (is.null(data[[bp]])) {
+  idx = match(c(SNP, chr, bp, P), colnames(data))
+  if (sum(is.na(idx)) > 0) {
+    stop(paste(c(SNP, chr, bp, P)[which(is.na(idx))], "not found.", sep = " "))
+  }
+  colnames(data)[idx] = c("SNP", "CHR", "BP", "P")
+
+  if (is.null(data$BP)) {
     stop("NULL BP")
   }
-  if (is.null(data[[P]])) {
+  if (is.null(data$P)) {
     stop("NULL P")
+  }
+  if (is.null(data$SNP) & (!is.null(lead_snp) | !is.null(annotate_snp))) {
+    stop("NULL SNP")
   }
   if (is.function(theme_base)) {
     theme_base = theme_base()
@@ -33,11 +42,11 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", P_ch
     scale_color = scale_color()
   }
 
-  conv = .convert2posX(data[[chr]], data[[bp]], build)
+  conv = .convert2posX(data$CHR, data$BP, build)
   data$x = conv$posX
-  data$color = as.factor(data[[chr]])
+  data$color = as.factor(data$CHR)
 
-  data$y = if (logP) -log10(data[[P]]) else data[[P]]
+  data$y = if (logP) -log10(data$P) else data$P
 
   plt = ggplot(data, aes(x, y, color = color)) + geom_point() +
           geom_hline(yintercept = -log10(significance), linetype = "dashed") +
@@ -48,20 +57,20 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", P_ch
           xlab(conv$xlabel) + ylab(expression(-log[10](italic(P))))
 
   if (!is.null(lead_snp)) {
-    lead_snp = subset(data, `SNP` %in% lead_snp)
+    lead_snp = subset(data, data$SNP %in% lead_snp)
   }
 
   if (!is.null(annotate_snp)) {
     lsnp = if(!is.null(ylim)) subset(lead_snp, y < ylim[2]) else lead_snp
-    plt = plt + geom_text(data = lsnp, aes(label = `SNP`), color = "black", angle = 90, hjust = -0.1)
+    plt = plt + geom_text(data = lsnp, aes(label = data$SNP), color = "black", angle = 90, hjust = -0.1)
   }
 
   if (!is.null(highlight)) {
     if (!is.list(highlight)) highlight = list(highlight)
     for (i in 1:length(highlight)) {
-      plt = plt + geom_point(data = subset(data, `SNP` %in% highlight[[i]]), color = highlight_col[i])
+      plt = plt + geom_point(data = subset(data, data$SNP %in% highlight[[i]]), color = highlight_col[i])
       if (!is.null(lead_snp)) {
-        lead_snp$color[lead_snp[[SNP]] %in% highlight[[i]]] = i
+        lead_snp$color[lead_snp$SNP %in% highlight[[i]]] = i
       }
     }
   }
@@ -69,31 +78,30 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", P_ch
 
   if (!is.null(ylim)) {
     plt = plt + coord_cartesian(ylim = ylim)
+    print(lead_snp)
+    print(ylim)
+    print(lead_snp)
     if (!is.null(lead_snp)) {
       lead_snp = subset(lead_snp, y >= ylim[2])
-      scale_color_highlight = scale_color
-      if (!is.null(highlight)) {
-        for (i in 1:length(highlight)) {
-          lead_snp$color[lead_snp[[SNP]] %in% highlight[[i]]] = i
-        }
-        scale_color_highlight = scale_color_manual(values = highlight_col)
-      }
+      scale_color_highlight = if(!is.null(highlight)) scale_color_manual(values = highlight_col) else scale_color
       if (is.null(P_char)) {
-        lead_snp$label = ifelse(logP, sprintf("\u25B2"), stringr::str_c(sprintf("%.3g",lead_snp[[P]]), sprintf("\u25B2"), sep = "\n"))
+        lead_snp$label = if(logP) stringr::str_c(sprintf("\u25BA"), sprintf("%.1e",lead_snp$P), sep = "") else sprintf("\u25B2")
+      } else if (P_char != FALSE) {
+        lead_snp$label = stringr::str_c(sprintf("\u25BA"), lead_snp[[P_char]], sep = "")
       } else {
-        lead_snp$label = stringr::str_c(lead_snp[[P_char]], sprintf("\u25B2"), sep = "\n")
+        lead_snp$label = sprintf("\u25B2")
       }
       plt_annot = ggplot(lead_snp) +
-                    geom_text(aes(x, 0, color = color, label = label)) +
+                    geom_text(aes(x, 0, color = color, label = label), size = 3, vjust = 0.5, angle = 90) +
                     scale_x_continuous(limits = c(0, max(data$x)), expand = expand.x) +
                     scale_color_highlight +
-                    theme_void() + theme(plot.margin = margin(6,6,-1,6))
+                    theme_void() + theme(plot.margin = margin(6,6,-2,6), legend.position = "none")
       g1 = ggplotGrob(plt_annot)
-      g2 = ggplotGrob(plt + theme(plot.margin = margin(-1,6,6,6)))
+      g2 = ggplotGrob(plt + theme(plot.margin = margin(-2,6,6,6)))
       maxWidth = grid::unit.pmax(g1$widths[2:5], g2$widths[2:5])
       g1$widths[2:5] <- as.list(maxWidth)
       g2$widths[2:5] <- as.list(maxWidth)
-      g = gridExtra::arrangeGrob(g1, g2, heights = c(1, 14))
+      g = gridExtra::arrangeGrob(g1, g2, heights = c(1, 11))
       if (plot.grid) {
         grid::grid.newpage()
         grid::grid.draw(g)
