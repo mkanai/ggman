@@ -12,6 +12,7 @@
 #' @export
 ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", P_char = NULL, logP = TRUE, build = 'hg19',
                         significance = c(5.0e-8), ylim = NULL,
+                        sparsify = TRUE, sparsify_threshold = 0.05, sparsify_nloci = 1e4,
                         lead_snp = NULL, annotate_snp = NULL,
                         theme_base = theme_publication(),
                         scale_color = scale_colour_dichromatic(),
@@ -47,6 +48,13 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", P_ch
   data$color = as.factor(data$CHR)
 
   data$y = if (logP) -log10(data$P) else data$P
+  if (sparsify) {
+    idx = which(data$y < -log10(sparsify_threshold))
+    idx = sample(idx, length(idx) - sparsify_nloci)
+    data = data[-idx,]
+  }
+
+  message(sprintf("Plotting %d points...", nrow(data)))
 
   plt = ggplot(data, aes(x, y, color = color)) + geom_point() +
           geom_hline(yintercept = -log10(significance), linetype = "dashed") +
