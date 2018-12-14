@@ -18,7 +18,7 @@ ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", P_ch
                         scale_color = scale_colour_dichromatic(),
                         highlight = NULL, highlight_col = c("mediumblue", "deeppink"),
                         plot.grid = FALSE,
-                        expand.x = c(0.03, 0.03), expand.y = c(0, 0.03)) {
+                        expand.x = c(0.03, 0.03), expand.y = c(0.01, 0.03)) {
   requireNamespace('ggplot2')
 
   idx = match(c(SNP, chr, bp, P), colnames(data))
