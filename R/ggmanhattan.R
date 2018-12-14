@@ -12,13 +12,13 @@
 #' @export
 ggmanhattan <- function(data, SNP = "SNP", chr = "CHR", bp = "BP", P = "P", P_char = NULL, logP = TRUE, build = 'hg19',
                         significance = c(5.0e-8), ylim = NULL,
-                        sparsify = TRUE, sparsify_threshold = 0.05, sparsify_nloci = 1e4,
+                        sparsify = TRUE, sparsify_threshold = 0.01, sparsify_nloci = 3e4,
                         lead_snp = NULL, annotate_snp = NULL,
                         theme_base = theme_publication(),
                         scale_color = scale_colour_dichromatic(),
                         highlight = NULL, highlight_col = c("mediumblue", "deeppink"),
                         plot.grid = FALSE,
-                        expand.x = c(0.03, 0.03), expand.y = c(0.03, 0.03)) {
+                        expand.x = c(0, 0.03), expand.y = c(0.03, 0.03)) {
   requireNamespace('ggplot2')
 
   idx = match(c(SNP, chr, bp, P), colnames(data))
